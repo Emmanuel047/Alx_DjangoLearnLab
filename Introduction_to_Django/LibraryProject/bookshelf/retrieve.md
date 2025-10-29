@@ -1,2 +1,1 @@
-print(book)
-#Nineteen Eighty-Four
+["Book.objects.get", "1984"]
