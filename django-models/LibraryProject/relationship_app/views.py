@@ -27,6 +27,6 @@ def register(request):
         if form.is_valid():
             form.save()
             return redirect('login')
-        else:
-            form = UserCreationForm()
-        return render(request, 'relationship_app/templatesregister.html', {'form':form})
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/templates/register.html', {'form':form})
