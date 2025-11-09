@@ -12,4 +12,4 @@ def mybooks(request):
 
 class lib_detils(ListView):
     model = Library
-    template_name= 'library_detail.html'
+    template_name= 'relationship_app/library_detail.html'
