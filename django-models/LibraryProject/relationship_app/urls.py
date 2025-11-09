@@ -2,9 +2,9 @@ from django.template import Library
 from django.urls import path
 from django.views.generic.list import ListView
 from . import views
-from .views import lib_detils
+from .views import Library_DetailView
 
 urlpatterns = [
-    path('books/', views.mybooks, name='books'),
-    path('library/', lib_detils.as_view(), name='lib_details')
+    path('books/', views.list_books, name='books'),
+    path('library/', Library_DetailView.as_view(), name='Library_DetailView')
 ]

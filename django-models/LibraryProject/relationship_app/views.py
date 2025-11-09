@@ -7,11 +7,11 @@ from django.views.generic.detail import DetailView
 
 
 # Create your views here.
-def mybooks(request):
+def list_books(request):
     books = Book.objects.all()
     return render(request, 'relationship_app/list_books.html')
 
 
-class lib_detils(ListView):
+class Library_DetailView(ListView):
     model = Library
     template_name= 'relationship_app/library_detail.html'
