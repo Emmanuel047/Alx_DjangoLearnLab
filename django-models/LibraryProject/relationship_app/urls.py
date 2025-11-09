@@ -2,7 +2,7 @@ from django.template import Library
 from django.urls import path
 from django.views.generic.list import ListView
 from . import views
-from .views import Library_DetailView
+from .views import list_books, Library_DetailView
 
 urlpatterns = [
     path('books/', views.list_books, name='books'),
