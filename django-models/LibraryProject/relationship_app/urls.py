@@ -5,6 +5,8 @@ from django.views.generic.list import ListView
 from . import views
 from .views import list_books, LibraryDetailView
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('books/', views.list_books, name='books'),
