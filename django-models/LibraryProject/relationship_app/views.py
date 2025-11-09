@@ -6,8 +6,9 @@ from .models import Book
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.shortcuts import render, redirect
-from django.contrib.auth.views import LoginView,
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
+from django.contrib.auth import login
 
 
 # Create your views here.
@@ -27,5 +28,5 @@ def register(request):
             form.save()
             return redirect('login')
         else:
-            form = user.CreationForm()
+            form = UserCreationForm()
         return render(request, 'relationship_app/templatesregister.html', {'form':form})
