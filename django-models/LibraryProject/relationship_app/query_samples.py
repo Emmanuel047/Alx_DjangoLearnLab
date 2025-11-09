@@ -1,1 +1,1 @@
-["Library.Objects.get(library_name)", "books.all()"]
+["Library.Objects.get(name=library_name)"]
