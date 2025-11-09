@@ -1,7 +1,7 @@
 #List all books in a library.
 library_name = "Central Library"
 library = Library.objects.get(name=library_name)
-books_in_library = library.Book.all()
+books_in_library = library.Books.all()
 
 for book in books_in_library:
     print(book.title)
