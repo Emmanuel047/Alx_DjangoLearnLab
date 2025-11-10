@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Librarian Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, Librarian!</h1>
+    <p>You have permissions to manage library resources.</p>
+    <nav>
+        <ul>
+            <li><a href="{% url 'admin_view' %}">Admin Dashboard</a></li>
+            <li><a href="{% url 'librarian_view' %}">Librarian Dashboard</a></li>
+            <li><a href="{% url 'member_view' %}">Member Dashboard</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
+</body>
+</html>
