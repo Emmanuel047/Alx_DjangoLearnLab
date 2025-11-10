@@ -12,8 +12,9 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from relationship_app.models import BookForm
+from django.contrib.auth.decorators import permission_required
 
 
 # Create your views here.
