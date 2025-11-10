@@ -7,6 +7,7 @@ from .views import librarian_view, list_books, LibraryDetailView, member_view
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
+from django.shortcuts import redirect
 
 urlpatterns = [
     path('books/', views.list_books, name='books'),
@@ -16,5 +17,6 @@ urlpatterns = [
     path('register', views.register, name='register'),
     path('admin/', views.admin_view, name='admin_view'),
     path('librarian/', views.librarian_view, name='librarian_view'),
-    path('member/', views.member_view, name='member_view',)
+    path('member/', views.member_view, name='member_view'),
+    path('', lambda request: redirect('login')),
 ]
