@@ -75,7 +75,7 @@ def add_books(request):
 
 
 @login_required
-@permission_required('relationship_app.can_edit_book', raise_exception=True)
+@permission_required('relationship_app.can_change_book', raise_exception=True)
 def edit_books(request):
     book = get_object_or_404(Book, id=book_id)
     if request.method == '':
