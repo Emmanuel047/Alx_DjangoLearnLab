@@ -10,10 +10,6 @@ from django.contrib.auth.models import AbstractUser
 class Author(models.Model):
     name = models.CharField(max_length=100)
 
-class customs(AbstractUser):
-
-
-
 class Book(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
@@ -21,9 +17,10 @@ class Book(models.Model):
 
     class Meta:
         permissions = [
-            ("can_add_book", "Can add a book"),
-            ("can_change_book", "Can change a book"),
-            ("can_delete_book", "Can delete a book"),
+            ("can_add", "Can add a book"),
+            ("can_edit", "Can change a book"),
+            ("can_delete", "Can delete a book"),
+            ("can_create", "Can create article"),
         ]
 
     def __str__(self):
