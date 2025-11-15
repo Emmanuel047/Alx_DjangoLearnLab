@@ -138,3 +138,37 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+
+# SECURITY ENHANCEMENTS FOR HTTPS
+
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# HTTP Strict Transport Security (HSTS) - instructs browsers to use HTTPS only for given seconds (1 year)
+SECURE_HSTS_SECONDS = 31536000
+
+# Include subdomains in HSTS policy
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Allow site to be preloaded in browsers supporting preloaded HSTS list
+SECURE_HSTS_PRELOAD = True
+
+# Cookies sent only over HTTPS connections
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Prevent your site from being framed to avoid clickjacking
+X_FRAME_OPTIONS = 'DENY'
+
+# Prevent browsers from MIME-sniffing a response away from the declared content-type
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable browser's built-in XSS filter protection
+SECURE_BROWSER_XSS_FILTER = True
+
+# If using a reverse proxy (like Nginx), set to recognize HTTPS headers properly
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# DEBUG must be False in production for these to take effect
+DEBUG = False
+
