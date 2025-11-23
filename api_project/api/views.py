@@ -7,7 +7,7 @@ from rest_framework import viewsets
 # Create your views here.
 
 
-class BookViewset(viewsets.ModelViewSet):
+class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.object.all()
     serializer_class = BookSerializer
 class BookList(generics.ListAPIView):
