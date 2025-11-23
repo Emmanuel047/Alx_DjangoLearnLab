@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework.authentication.TokenAuthentication',
     'rest_framework.authtoken',
+    'rest_framework.permissions.IsAuthenticated',
 ]
 
 MIDDLEWARE = [
