@@ -2,13 +2,13 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Auth URLs
+    # Authentication URLs
     path('register/', views.register_view, name='register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
     
-    # CRUD URLs
+    # ✅ CRUD POST URLS - ADD THESE
     path('posts/', views.PostListView.as_view(), name='post-list'),
     path('posts/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
     path('posts/new/', views.PostCreateView.as_view(), name='post-create'),
