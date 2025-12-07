@@ -1,0 +1,15 @@
+{% extends 'blog/base.html' %}
+{% block title %}Home - Django Blog{% endblock %}
+{% block content %}
+<h1>Welcome to Django Blog</h1>
+{% if posts %}
+    <h3>Recent Posts:</h3>
+    <ul>
+    {% for post in posts %}
+        <li><strong>{{ post.title }}</strong> by {{ post.author.username }} ({{ post.published_date|date:"M d, Y" }})</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No posts yet. <a href="{% url 'profile' %}">Create your profile</a> to get started!</p>
+{% endif %}
+{% endblock %}
