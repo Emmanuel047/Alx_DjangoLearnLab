@@ -8,9 +8,44 @@
     
     {% if user.is_authenticated and user == post.author %}
     <div class="post-actions">
-        <a href="{% url 'post-update' post.pk %}" class="btn btn-warning">Edit</a>
-        <a href="{% url 'post-delete' post.pk %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'post-update' post.pk %}" class="btn btn-warning">Edit Post</a>
+        <a href="{% url 'post-delete' post.pk %}" class="btn btn-danger">Delete Post</a>
     </div>
     {% endif %}
+</div>
+
+<!-- COMMENTS SECTION -->
+<div class="comments-section">
+    <h3>Comments ({{ comments.count }})</h3>
+    
+    {% if user.is_authenticated %}
+    <h4>Add Comment</h4>
+    <form method="post" action="{% url 'comment-create' post.pk %}">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ comment_form.content }}
+        </div>
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+    </form>
+    {% else %}
+    <p><a href="{% url 'login' %}">Login</a> to comment</p>
+    {% endif %}
+
+    <div class="comments-list">
+        {% for comment in comments %}
+        <div class="comment">
+            <p><strong>{{ comment.author.username }}</strong> <small>{{ comment.created_at|date:"M d, Y H:i" }}</small></p>
+            <p>{{ comment.content|linebreaks }}</p>
+            {% if user.is_authenticated and user == comment.author %}
+            <div class="comment-actions">
+                <a href="{% url 'comment-update' comment.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'comment-delete' comment.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p>No comments yet. Be the first!</p>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
