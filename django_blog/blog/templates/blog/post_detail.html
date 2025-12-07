@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<div class="post">
+    <h1>{{ post.title }}</h1>
+    <p><strong>By {{ post.author.username }}</strong> on {{ post.published_date|date:"M d, Y" }}</p>
+    <div class="content">{{ post.content|linebreaks }}</div>
+    
+    {% if user.is_authenticated and user == post.author %}
+    <div class="post-actions">
+        <a href="{% url 'post-update' post.pk %}" class="btn btn-warning">Edit</a>
+        <a href="{% url 'post-delete' post.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
