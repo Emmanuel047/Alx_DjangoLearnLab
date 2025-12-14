@@ -7,6 +7,13 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+from .models import Post
+from .serializers import PostSerializer
+
 
 User = get_user_model()
 
@@ -67,3 +74,16 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Comment.objects.all().select_related('post__author', 'author')
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_feed(request):
+    # Get users that current user follows
+    following_users = request.user.followers.all()
+    # Get posts from followed users + own posts
+    feed_posts = Post.objects.filter(
+        author__in=following_users
+    ).select_related('author').prefetch_related('comments__author').order_by('-created_at')
+    
+    serializer = PostSerializer(feed_posts, many=True)
+    return Response(serializer.data)
