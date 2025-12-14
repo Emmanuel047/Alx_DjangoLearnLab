@@ -3,9 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db import models
 from django.contrib.auth import get_user_model
-from .models import Post,
-from .models import Comment
+from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 
 User = get_user_model()
@@ -22,32 +22,31 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         return obj.author == request.user
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.select_related('author').prefetch_related('comments__author')
+    queryset = Post.objects.all().select_related('author').prefetch_related('comments__author')
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     pagination_class = PostPagination
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['title', 'author']  # Filter by title (icontains) and author
-    search_fields = ['title', 'content']    # Add search_fields for search param
+    filterset_fields = ['title', 'author']
+    search_fields = ['title', 'content']
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        # Additional content search filtering
+        queryset = Post.objects.all()
         search = self.request.query_params.get('search', None)
         if search:
             queryset = queryset.filter(
                 models.Q(title__icontains=search) | 
                 models.Q(content__icontains=search)
             )
-        return queryset
+        return queryset.select_related('author').prefetch_related('comments__author')
 
     @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
     def comments(self, request, pk=None):
         post = self.get_object()
-        comments = post.comments.select_related('author')
+        comments = Comment.objects.all().filter(post=post).select_related('author')
         paginator = PageNumberPagination()
         paginator.page_size = 5
         page = paginator.paginate_queryset(comments, request)
@@ -58,10 +57,13 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.select_related('post__author', 'author')
+    queryset = Comment.objects.all().select_related('post__author', 'author')
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-    pagination_class = PostPagination  # Reuse pagination
+    pagination_class = PostPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    def get_queryset(self):
+        return Comment.objects.all().select_related('post__author', 'author')
