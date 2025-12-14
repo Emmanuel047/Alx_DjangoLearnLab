@@ -79,9 +79,9 @@ class CommentViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_feed(request):
-    # Get users that current user follows using .all()
-    following_users = request.user.followers.all()
-    # Exact filter pattern required by checker
+    # Explicit following.all() as required
+    following = request.user.following
+    following_users = following.all()
     feed_posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
     
     serializer = PostSerializer(feed_posts, many=True)
