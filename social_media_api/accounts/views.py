@@ -13,7 +13,6 @@ CustomUser = get_user_model()
 
 class RegistrationView(generics.CreateAPIView, GenericAPIView):
     serializer_class = RegistrationSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -25,9 +24,7 @@ class RegistrationView(generics.CreateAPIView, GenericAPIView):
             'token': token.key
         }, status=status.HTTP_201_CREATED)
 
-class LoginView(ObtainAuthToken, GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-
+class LoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -37,7 +34,7 @@ class LoginView(ObtainAuthToken, GenericAPIView):
 
 class UserProfileView(generics.RetrieveUpdateAPIView, GenericAPIView):
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
@@ -45,10 +42,10 @@ class UserProfileView(generics.RetrieveUpdateAPIView, GenericAPIView):
 class UserViewSet(viewsets.ReadOnlyModelViewSet, GenericAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-    def follow(self, request, pk=None):
+    @action(detail=True, methods=['post'])
+    def followuser(self, request, pk=None):
         user_to_follow = self.get_object()
         if user_to_follow == request.user:
             return Response({'error': 'Cannot follow yourself'}, status=status.HTTP_400_BAD_REQUEST)
@@ -58,8 +55,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet, GenericAPIView):
             'following_count': request.user.followers.count()
         }, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-    def unfollow(self, request, pk=None):
+    @action(detail=True, methods=['post'])
+    def unfollowuser(self, request, pk=None):
         user_to_unfollow = self.get_object()
         if user_to_unfollow == request.user:
             return Response({'error': 'Cannot unfollow yourself'}, status=status.HTTP_400_BAD_REQUEST)
@@ -68,3 +65,15 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet, GenericAPIView):
             'status': 'unfollowed',
             'following_count': request.user.followers.count()
         }, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def following(self, request):
+        following = request.user.followers.all()
+        serializer = UserSerializer(following, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def followers(self, request):
+        followers = request.user.following.all()
+        serializer = UserSerializer(followers, many=True)
+        return Response(serializer.data)
