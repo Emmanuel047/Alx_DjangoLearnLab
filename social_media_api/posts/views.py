@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
-from .models import Post, Comment
+from .models import Post,
+from .models import Comment
 from .serializers import PostSerializer, CommentSerializer
 
 User = get_user_model()
