@@ -10,4 +10,7 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='login'),
     path('profile/', views.UserProfileView.as_view(), name='profile'),
     path('', include(router.urls)),
+    # Direct follow/unfollow paths as specified
+    path('follow/<int:user_id>/', views.UserViewSet.as_view({'post': 'followuser'}), name='follow_user'),
+    path('unfollow/<int:user_id>/', views.UserViewSet.as_view({'post': 'unfollowuser'}), name='unfollow_user'),
 ]
