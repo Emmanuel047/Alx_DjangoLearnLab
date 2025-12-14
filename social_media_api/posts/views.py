@@ -1,19 +1,17 @@
+
 from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from django_filters.rest_framework import DjangoFilterBackend
-from django.db import models
-from django.contrib.auth import get_user_model
-from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from .models import Post
-from .serializers import PostSerializer
-
+from django.contrib.contenttypes.models import ContentType
+from django.db import models
+from .models import Post, Comment, Like
+from notifications.models import Notification
+from .serializers import PostSerializer, CommentSerializer
 
 User = get_user_model()
 
@@ -75,14 +73,46 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Comment.objects.all().select_related('post__author', 'author')
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_feed(request):
-    # Explicit following.all() as required
     following = request.user.following
     following_users = following.all()
     feed_posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
-    
     serializer = PostSerializer(feed_posts, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_post(request, pk):
+    post = generics.get_object_or_404(Post, pk=pk)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+    
+    if created:
+        Notification.objects.create(
+            recipient=post.author,
+            actor=request.user,
+            verb='liked',
+            target_content_type=ContentType.objects.get_for_model(post),
+            target_object_id=post.pk,
+            target=post
+        )
+    
+    return Response({
+        'status': 'liked' if created else 'already_liked',
+        'likes_count': post.likes.count()
+    })
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def unlike_post(request, pk):
+    post = generics.get_object_or_404(Post, pk=pk)
+    try:
+        like = Like.objects.get(user=request.user, post=post)
+        like.delete()
+        return Response({
+            'status': 'unliked',
+            'likes_count': post.likes.count()
+        })
+    except Like.DoesNotExist:
+        return Response({'error': 'Like not found'}, status=404)
