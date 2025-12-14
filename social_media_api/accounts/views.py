@@ -25,7 +25,7 @@ class RegistrationView(generics.CreateAPIView, GenericAPIView):
             'token': token.key
         }, status=status.HTTP_201_CREATED)
 
-class LoginView(ObtainAuthToken):
+class LoginView(ObtainAuthToken, GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
@@ -35,14 +35,14 @@ class LoginView(ObtainAuthToken):
         token, _ = Token.objects.get_or_create(user=user)
         return Response({'token': token.key, 'user': UserSerializer(user).data})
 
-class UserProfileView(generics.RetrieveUpdateAPIView):
+class UserProfileView(generics.RetrieveUpdateAPIView, GenericAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet, GenericAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -68,15 +68,3 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             'status': 'unfollowed',
             'following_count': request.user.followers.count()
         }, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
-    def following(self, request):
-        following = request.user.followers.all()
-        serializer = UserSerializer(following, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
-    def followers(self, request):
-        followers = request.user.following.all()
-        serializer = UserSerializer(followers, many=True)
-        return Response(serializer.data)
