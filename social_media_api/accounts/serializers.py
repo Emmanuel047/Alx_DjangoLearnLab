@@ -31,4 +31,5 @@ class RegistrationSerializer(serializers.ModelSerializer):
         validated_data.pop('password_confirm')
         password = validated_data.pop('password')
         user = get_user_model().objects.create_user(**validated_data, password=password)
+        Token.objects.create(user=user)  # Token creation in serializer
         return user
